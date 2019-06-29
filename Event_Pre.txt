@@ -1,0 +1,131 @@
+def Event ( id = "", Object = None ):
+    """모든 이벤트 처리는 여기서 합니다."""
+    print("----Event")
+    if id == "Button":# 클릭시 파란색 이팩트 
+        print(Object)
+        #Object.c = Color.Color.c4
+        Color.ColorChanger ( engine ,engine.root , Object.c , Color.Color.c4, Object , 3 )
+        Event ( "DrawAll", None )
+    elif id == "ButtonRelease":# 원래 색으로 돌아옴
+        Color.ColorChanger ( engine ,engine.root , Object.c , Object.GetOrigenColor() , Object , 10 )
+        Event ( "DrawAll", None )
+    elif id == "DrawAll":
+        engine.Main_Frame.Draw( g )
+    elif id == "ButtonLock":
+        if engine.Main_Frame.enable == True:
+            engine.Main_Frame.Enable( False )
+        else:
+            engine.Main_Frame.Enable( True )
+    elif id == "TextClick":
+        Object.text.FontSize(int(Object.text.FontSize()) + 10)
+        Event( "DrawAll", None )
+    elif id == "TextClickRelease":
+        Animation.FontSize ( Object, engine , 10 , int(Object.text.FontSize()) , int(Object.text.FontSize()) - 10 )
+    elif id == "MakeGraph":
+        data = engine.data.sumsameList ( "태그" )
+        data = engine.data.tool.percentData ( data )
+        if len( data ) > 0 and data[0]["금액"] < 0:
+            engine.Graph_Frame.첫이름.text.text = data[0]["태그"] + "\n" + str(-data[0]["금액"]) + "%"
+            engine.Graph_Frame.첫그래프.pSize보조.y = ( data[0]["금액"]/100 + 1 )* engine.Graph_Frame.첫그래프.pSizeORIGEN.y
+        if len( data ) > 1 and data[1]["금액"] < 0:
+            engine.Graph_Frame.둘이름.text.text = data[1]["태그"] + "\n" + str(-data[1]["금액"]) + "%"
+            engine.Graph_Frame.둘그래프.pSize보조.y = ( data[1]["금액"]/100 + 1 )* engine.Graph_Frame.둘그래프.pSizeORIGEN.y
+        if len( data ) > 2 and data[2]["금액"] < 0:
+            engine.Graph_Frame.삼이름.text.text = data[2]["태그"] + "\n" + str(-data[2]["금액"]) + "%"
+            engine.Graph_Frame.삼그래프.pSize보조.y = ( data[2]["금액"]/100 + 1 )* engine.Graph_Frame.삼그래프.pSizeORIGEN.y
+        if len( data ) > 3 and data[3]["금액"] < 0:
+            engine.Graph_Frame.넷이름.text.text = data[3]["태그"] + "\n" + str(-data[3]["금액"]) + "%"
+            engine.Graph_Frame.넷그래프.pSize보조.y = ( data[3]["금액"]/100 + 1 )* engine.Graph_Frame.넷그래프.pSizeORIGEN.y
+        if len( data ) > 4 and data[4]["금액"] < 0:
+            engine.Graph_Frame.오이름.text.text = data[4]["태그"] + "\n" + str(-data[4]["금액"]) + "%"
+            engine.Graph_Frame.오그래프.pSize보조.y = ( data[4]["금액"]/100 + 1 )* engine.Graph_Frame.오그래프.pSizeORIGEN.y
+        if len( data ) > 0:
+            지출 = engine.data.tool.plusData ( data, False )
+            engine.Graph_Frame.전체이름.text.text = "전체\n" + str (-지출) + "%"
+            engine.Graph_Frame.전체그래프.pSize보조.y = ( 지출/100 + 1 )* engine.Graph_Frame.전체그래프.pSizeORIGEN.y
+
+    elif id == "메인.메인": # 1
+        Object.SetOrigenColor ( Color.Color.c2 )
+        Event ( "ButtonRelease" , Object )
+        engine.Main_Frame.내역.SetOrigenColor ( Color.Color.c1 )
+        Event ( "ButtonRelease" , engine.Main_Frame.내역 )
+        engine.Main_Frame.추가.SetOrigenColor ( Color.Color.c1 )
+        Event ( "ButtonRelease" , engine.Main_Frame.추가 )
+        Event ( "ButtonLock" )
+        Event ( "MakeGraph" )
+        engine.root.after ( 1600 , Event , "ButtonLock" )
+        _Closer ( 1 )
+    elif id == "메인.내역": # 2
+        Object.SetOrigenColor ( Color.Color.c2 )
+        Event ( "ButtonRelease" , Object )
+        engine.Main_Frame.메인.SetOrigenColor ( Color.Color.c1 )
+        Event ( "ButtonRelease" , engine.Main_Frame.메인 )
+        engine.Main_Frame.추가.SetOrigenColor ( Color.Color.c1 )
+        Event ( "ButtonRelease" , engine.Main_Frame.추가 )
+        Event ( "ButtonLock" )
+        engine.root.after ( 1600 , Event , "ButtonLock" )
+        _Closer ( 2 )
+    elif id == "메인.추가": # 3
+        Object.SetOrigenColor ( Color.Color.c2 )
+        Event ( "ButtonRelease" , Object )
+        engine.Main_Frame.내역.SetOrigenColor ( Color.Color.c1 )
+        Event ( "ButtonRelease" , engine.Main_Frame.내역 )
+        engine.Main_Frame.메인.SetOrigenColor ( Color.Color.c1 )
+        Event ( "ButtonRelease" , engine.Main_Frame.메인 )
+        Event ( "ButtonLock" )
+        engine.root.after ( 1600 , Event , "ButtonLock" )
+        _Closer ( 3 )
+    elif id == "내역.이전글":
+        engine.data.PageDown( )
+        _ViewPage()
+    elif id == "내역.다음글":
+        engine.data.PageUp( )
+        _ViewPage()
+    elif id == "내역.날자범위":
+        engine.data.MakeViewData( "날자" )
+        _ViewPage()
+        Animation.Move ( engine.View_Frame.다음글 , engine , 25 , engine.View_Frame.다음글.pStart , Point (1200,300) )
+        Animation.Move ( engine.View_Frame.이전글 , engine , 25 , engine.View_Frame.이전글.pStart , Point (0,300) )
+        Animation.Move ( engine.View_Frame.큰바 , engine , 20 , engine.View_Frame.큰바.pStart , Point (0,300) )
+        Animation.Move ( engine.View_Frame.작은바 , engine , 15 , engine.View_Frame.작은바.pStart , Point (500,300) )
+    elif id == "내역.금액범위":
+        engine.data.MakeViewData( "금액" )
+        _ViewPage()
+        Animation.Move ( engine.View_Frame.다음글 , engine , 25 , engine.View_Frame.다음글.pStart , Point (1200,400) )
+        Animation.Move ( engine.View_Frame.이전글 , engine , 25 , engine.View_Frame.이전글.pStart , Point (0,400) )
+        Animation.Move ( engine.View_Frame.큰바 , engine , 20 , engine.View_Frame.큰바.pStart , Point (0,400) )
+        Animation.Move ( engine.View_Frame.작은바 , engine , 15 , engine.View_Frame.작은바.pStart , Point (500,400) )
+    elif id == "내역.태그범위":
+        engine.data.MakeViewData( "태그" )
+        _ViewPage()
+        Animation.Move ( engine.View_Frame.다음글 , engine , 25 , engine.View_Frame.다음글.pStart , Point (1200,500) )
+        Animation.Move ( engine.View_Frame.이전글 , engine , 25 , engine.View_Frame.이전글.pStart , Point (0,500) )
+        Animation.Move ( engine.View_Frame.큰바 , engine , 20 , engine.View_Frame.큰바.pStart , Point (0,500) )
+        Animation.Move ( engine.View_Frame.작은바 , engine , 15 , engine.View_Frame.작은바.pStart , Point (500,500) )
+    elif id == "내역.내용범위":
+        engine.data.MakeViewData( "내용" )
+        _ViewPage()
+        Animation.Move ( engine.View_Frame.다음글 , engine , 25 , engine.View_Frame.다음글.pStart , Point (1200,600) )
+        Animation.Move ( engine.View_Frame.이전글 , engine , 25 , engine.View_Frame.이전글.pStart , Point (0,600) )
+        Animation.Move ( engine.View_Frame.큰바 , engine , 20 , engine.View_Frame.큰바.pStart , Point (0,600) )
+        Animation.Move ( engine.View_Frame.작은바 , engine , 15 , engine.View_Frame.작은바.pStart , Point (500,600) )
+    elif id == "추가.날자범위":
+        Animation.Move ( engine.Plus_Frame.큰바 , engine , 20 , engine.Plus_Frame.큰바.pStart , Point ( 0 , 300 ) )
+        Animation.Move ( engine.Plus_Frame.작은바 , engine , 15 , engine.Plus_Frame.작은바.pStart , Point ( 600 , 300 ) )
+        Animation.Move ( engine.Plus_Frame.설명글 , engine , 25 , engine.Plus_Frame.설명글.pStart , Point ( 0 , 300 ) )
+    elif id == "추가.금액범위":
+        Animation.Move ( engine.Plus_Frame.큰바 , engine , 20 , engine.Plus_Frame.큰바.pStart , Point ( 0 , 400 ) )
+        Animation.Move ( engine.Plus_Frame.작은바 , engine , 15 , engine.Plus_Frame.작은바.pStart , Point ( 600 , 400 ) )
+        Animation.Move ( engine.Plus_Frame.설명글 , engine , 25 , engine.Plus_Frame.설명글.pStart , Point ( 0 , 400 ) )
+    elif id == "추가.태그범위":
+        Animation.Move ( engine.Plus_Frame.큰바 , engine , 20 , engine.Plus_Frame.큰바.pStart , Point ( 0 , 500 ) )
+        Animation.Move ( engine.Plus_Frame.작은바 , engine , 15 , engine.Plus_Frame.작은바.pStart , Point ( 600 , 500 ) )
+        Animation.Move ( engine.Plus_Frame.설명글 , engine , 25 , engine.Plus_Frame.설명글.pStart , Point ( 0 , 500 ) )
+    elif id == "추가.내용범위":
+        Animation.Move ( engine.Plus_Frame.큰바 , engine , 20 , engine.Plus_Frame.큰바.pStart , Point ( 0 , 600 ) )
+        Animation.Move ( engine.Plus_Frame.작은바 , engine , 15 , engine.Plus_Frame.작은바.pStart , Point ( 600 , 600 ) )
+        Animation.Move ( engine.Plus_Frame.설명글 , engine , 25 , engine.Plus_Frame.설명글.pStart , Point ( 0 , 600 ) )    
+    elif id == "메인.종료": # 4
+        Event ( "ButtonLock" )
+        engine.root.after ( 1600 , Event , "ButtonLock" )
+        _Closer ( 4 )
